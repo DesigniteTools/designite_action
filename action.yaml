@@ -43,5 +43,5 @@ runs:
     - name: Run Designite
       run: |
         .\DesigniteConsole\DesigniteConsole.exe -ci -repo ${{github.repository}} -pat ${{ secrets.PAT }} -verbose
-        dir D_tushartushar_designite
+        dir D_tushartushar_designite_action_client
       shell: cmd
