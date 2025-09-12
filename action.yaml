@@ -1,0 +1,47 @@
+name: Designite Action
+description: Analyzes the newly commited code, detects comprehensive set of code smells, and archives the results.
+branding:
+    color: 'orange'
+    icon: 'arrow-up-right'
+inputs:
+  PAT:
+    description: 'Personal access token'
+    default: 'No PAT provided'
+  D_KEY:
+    description: 'Designite license key - optional'
+    default: 'No key'
+
+runs:
+  using: "composite"
+  steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v4
+
+    - name: download build tools
+      run: Invoke-webrequest -uri  https://aka.ms/vs/17/release/vs_buildtools.exe -OutFile vs_buildtools.exe
+      shell: powershell
+
+    - name: install build tools with required packages
+      run: .\vs_buildtools.exe --wait --norestart --passive --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools" --includeOptional --includeRecommended --add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Workload.NetCoreTools
+      shell: cmd
+
+    - name: set MSBuildSDKsPath env variable
+      run: echo ::set-env name=MSBuildSDKsPath::"C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\MSBuild\Sdks"
+      shell: cmd
+
+    - name: download DesigniteConsole.exe and unpack
+      run: |
+        curl.exe -o DesigniteConsole.zip "https://www.designite-tools.com/assets/DesigniteConsole.zip"
+        powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('DesigniteConsole.zip','.');}"
+      shell: cmd
+    - name: list the directory
+      run: dir
+      shell: cmd
+    - name: repo name
+      run: echo ${{github.repository}}
+      shell: cmd
+    - name: Run Designite
+      run: |
+        .\DesigniteConsole\DesigniteConsole.exe -ci -repo ${{github.repository}} -pat ${{ secrets.PAT }} -verbose
+        dir D_tushartushar_designite
+      shell: cmd

@@ -1,2 +1,2 @@
-# designite_action
-Designite Action for C# projects
+# Designite action for C# projects
+
