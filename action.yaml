@@ -1,5 +1,5 @@
 name: Designite Action
-description: Analyzes the newly commited code, detects comprehensive set of code smells, archives the results, and optionally log the code quality analysis reports to DCode for better tracking and visualization.
+description: Analyzes the newly commited code, detects comprehensive set of code smells, and upload reports to DCode.
 branding:
     color: 'orange'
     icon: 'arrow-up-right'
