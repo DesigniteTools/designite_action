@@ -43,5 +43,9 @@ runs:
     - name: Run Designite
       run: |
         .\DesigniteConsole_4_2_0_0\DesigniteConsole.exe -ci -repo ${{github.repository}} -pat ${{ inputs.PAT }} -verbose
-        dir D_tushartushar_designite_action_client
+        dir Designite_output
       shell: cmd
+    - name: Archive Designite results
+      uses: actions/upload-artifact@v4
+      with:
+        path: "Designite_output"
