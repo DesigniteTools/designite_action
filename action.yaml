@@ -9,7 +9,7 @@ inputs:
     default: 'No PAT provided'
   D_KEY:
     description: 'Designite license key - optional'
-    default: 'No key'
+    default: ''
   API_KEY:
     description: "DCode API key for authentication"
     required: false
@@ -46,7 +46,14 @@ runs:
     - name: repo name
       run: echo ${{github.repository}}
       shell: cmd
-    - name: Run Designite
+    - name: Run Designite with Designite key
+      if: ${{ inputs.D_KEY != '' }}
+      run: |
+        .\DesigniteConsole_4_2_0_0\DesigniteConsole.exe -ci -repo ${{github.repository}} -pat ${{ inputs.PAT }} -k ${{ inputs.D_KEY }} -verbose
+        dir Designite_output
+      shell: cmd
+    - name: Run Designite without Designite key
+      if: ${{ inputs.D_KEY == '' }}
       run: |
         .\DesigniteConsole_4_2_0_0\DesigniteConsole.exe -ci -repo ${{github.repository}} -pat ${{ inputs.PAT }} -verbose
         dir Designite_output
