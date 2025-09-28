@@ -37,7 +37,7 @@ runs:
 
     - name: download DesigniteConsole.exe and unpack
       run: |
-        curl.exe -o DesigniteConsole.zip "https://www.designite-tools.com/assets/DesigniteConsole.zip"
+        curl.exe -o DesigniteConsole.zip "https://www.designite-tools.com/assets/DesigniteConsole2.zip"
         powershell.exe -nologo -noprofile -command "& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory('DesigniteConsole.zip','.');}"
       shell: cmd
     - name: list the directory
@@ -49,13 +49,13 @@ runs:
     - name: Run Designite with Designite key
       if: ${{ inputs.D_KEY != '' }}
       run: |
-        .\DesigniteConsole_4_2_0_0\DesigniteConsole.exe -ci -repo ${{github.repository}} -pat ${{ inputs.PAT }} -k ${{ inputs.D_KEY }} -verbose
+        .\DesigniteConsole\DesigniteConsole.exe -ci -repo ${{github.repository}} -pat ${{ inputs.PAT }} -k ${{ inputs.D_KEY }} -verbose
         dir Designite_output
       shell: cmd
     - name: Run Designite without Designite key
       if: ${{ inputs.D_KEY == '' }}
       run: |
-        .\DesigniteConsole_4_2_0_0\DesigniteConsole.exe -ci -repo ${{github.repository}} -pat ${{ inputs.PAT }} -verbose
+        .\DesigniteConsole\DesigniteConsole.exe -ci -repo ${{github.repository}} -pat ${{ inputs.PAT }} -verbose
         dir Designite_output
       shell: cmd
     - name: Archive Designite results
