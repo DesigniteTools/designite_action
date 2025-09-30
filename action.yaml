@@ -16,6 +16,10 @@ inputs:
   PROJECT_ID:
     description: "DCode project ID"
     required: false
+  FOLDER_PATH:
+    description: "Relative path to source code folder to be analyzed"
+    required: false
+    default: ''
 
 runs:
   using: "composite"
@@ -30,11 +34,6 @@ runs:
     - name: install build tools with required packages
       run: .\vs_buildtools.exe --wait --norestart --passive --installPath "C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools" --includeOptional --includeRecommended --add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.NativeDesktop --add Microsoft.VisualStudio.Workload.NetCoreTools
       shell: cmd
-
-#    - name: set MSBuildSDKsPath env variable
-#      run: echo ::set-env name=MSBuildSDKsPath::"C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\MSBuild\Sdks"
-#      shell: cmd
-
     - name: download DesigniteConsole.exe and unpack
       run: |
         curl.exe -o DesigniteConsole.zip "https://www.designite-tools.com/assets/DesigniteConsole2.zip"
@@ -46,16 +45,17 @@ runs:
     - name: repo name
       run: echo ${{github.repository}}
       shell: cmd
-    - name: Run Designite with Designite key
-      if: ${{ inputs.D_KEY != '' }}
+    - name: Run Designite with optional params
       run: |
-        .\DesigniteConsole\DesigniteConsole.exe -ci -repo ${{github.repository}} -pat ${{ inputs.PAT }} -k ${{ inputs.D_KEY }} -verbose
-        dir Designite_output
-      shell: cmd
-    - name: Run Designite without Designite key
-      if: ${{ inputs.D_KEY == '' }}
-      run: |
-        .\DesigniteConsole\DesigniteConsole.exe -ci -repo ${{github.repository}} -pat ${{ inputs.PAT }} -verbose
+        set CMD=.\DesigniteConsole\DesigniteConsole.exe -ci -repo ${{ github.repository }} -pat ${{ inputs.PAT }} -verbose
+        if not "${{ inputs.D_KEY }}"=="" (
+          set CMD=%CMD% -k ${{ inputs.D_KEY }}
+        )
+        if not "${{ inputs.FOLDER_PATH }}"=="" (
+          set CMD=%CMD% -f ${{ inputs.FOLDER_PATH }}
+        )
+        echo Running: %CMD%
+        %CMD%
         dir Designite_output
       shell: cmd
     - name: Archive Designite results
